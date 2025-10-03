@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delhi-NCR Air Quality Monitor</title>
-    <meta name="description" content="Personalized air quality dashboard for Delhi-NCR citizens with health alerts, forecasts and recommendations">
+    <meta name="description" content="Real-time air quality monitoring with Google Apps Script integration">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -47,15 +47,15 @@
             min-height: 100vh;
         }
         
-        /* Header Styles - FIXED */
+        /* Modern Header Styles */
         .app-header {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, #0a58ca 100%);
             color: white;
-            padding: 15px 20px;
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -72,23 +72,36 @@
             background: none;
             border: none;
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin-right: 15px;
             cursor: pointer;
-            padding: 5px;
+            padding: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+        
+        .menu-toggle:hover {
+            background-color: rgba(255,255,255,0.1);
         }
         
         .logo {
             display: flex;
             align-items: center;
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+        
+        .logo-icon {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 8px;
+            margin-right: 10px;
         }
         
         .header-right {
@@ -103,19 +116,25 @@
             border: none;
             color: white;
             font-size: 1.2rem;
-            margin-left: 15px;
+            margin-left: 12px;
             cursor: pointer;
             position: relative;
-            padding: 5px;
+            padding: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+        
+        .header-icon:hover {
+            background-color: rgba(255,255,255,0.1);
         }
         
         .notification-badge {
             position: absolute;
-            top: -5px;
-            right: -5px;
+            top: -2px;
+            right: -2px;
             background: var(--danger);
             color: white;
             border-radius: 50%;
@@ -125,9 +144,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 2px solid var(--primary);
         }
         
-        /* Sidebar Styles */
+        /* Modern Sidebar Styles */
         .sidebar {
             position: fixed;
             top: 0;
@@ -135,7 +155,7 @@
             width: var(--sidebar-width);
             height: 100vh;
             background: white;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
             transition: left 0.3s ease;
             z-index: 999;
             overflow-y: auto;
@@ -167,27 +187,30 @@
         }
         
         .sidebar-menu li {
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #f0f0f0;
         }
         
         .sidebar-menu a {
             display: flex;
             align-items: center;
-            padding: 15px 20px;
+            padding: 16px 20px;
             color: var(--dark);
             text-decoration: none;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            font-weight: 500;
         }
         
         .sidebar-menu a:hover, .sidebar-menu a.active {
-            background: #f0f5ff;
+            background: linear-gradient(135deg, #f0f5ff 0%, #e6f0ff 100%);
             color: var(--primary);
+            border-left: 4px solid var(--primary);
         }
         
         .sidebar-menu i {
-            margin-right: 10px;
+            margin-right: 12px;
             width: 20px;
             text-align: center;
+            font-size: 1.1rem;
         }
         
         /* Main Content Styles */
@@ -197,20 +220,30 @@
             transition: margin-left 0.3s;
         }
         
-        /* Dashboard Cards */
+        /* Modern Dashboard Cards */
         .dashboard-card {
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             margin-bottom: 20px;
             overflow: hidden;
+            border: 1px solid #f0f0f0;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
         }
         
         .card-header {
-            padding: 15px 20px;
-            background: #f8f9fa;
+            padding: 18px 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-bottom: 1px solid #eee;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: between;
         }
         
         .card-body {
@@ -218,12 +251,12 @@
         }
         
         /* AQI Status Colors */
-        .aqi-good { background-color: #28a745; color: white; }
-        .aqi-moderate { background-color: #ffc107; color: black; }
-        .aqi-unhealthy-sensitive { background-color: #fd7e14; color: white; }
-        .aqi-unhealthy { background-color: #dc3545; color: white; }
-        .aqi-very-unhealthy { background-color: #6f42c1; color: white; }
-        .aqi-hazardous { background-color: #6c757d; color: white; }
+        .aqi-good { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; }
+        .aqi-moderate { background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); color: black; }
+        .aqi-unhealthy-sensitive { background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%); color: white; }
+        .aqi-unhealthy { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; }
+        .aqi-very-unhealthy { background: linear-gradient(135deg, #6f42c1 0%, #5a2d9c 100%); color: white; }
+        .aqi-hazardous { background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; }
         
         /* Map Container */
         #map {
@@ -236,12 +269,13 @@
         .nav-tabs .nav-link {
             border: none;
             color: var(--secondary);
-            padding: 10px 15px;
+            padding: 12px 20px;
+            font-weight: 500;
         }
         
         .nav-tabs .nav-link.active {
             color: var(--primary);
-            border-bottom: 2px solid var(--primary);
+            border-bottom: 3px solid var(--primary);
             background: transparent;
         }
         
@@ -257,6 +291,7 @@
             top: 50%;
             transform: translateY(-50%);
             z-index: 5;
+            color: var(--secondary);
         }
         
         /* Responsive adjustments */
@@ -293,7 +328,7 @@
             }
             
             .app-header {
-                padding: 12px 15px;
+                padding: 10px 15px;
             }
             
             .logo {
@@ -301,18 +336,23 @@
             }
             
             .header-icon {
-                margin-left: 10px;
+                margin-left: 8px;
                 font-size: 1.1rem;
             }
             
             .menu-toggle {
-                margin-right: 10px;
+                margin-right: 8px;
+                font-size: 1.2rem;
+            }
+            
+            .main-content {
+                padding: 15px;
             }
         }
         
         @media (max-width: 480px) {
             .app-header {
-                padding: 10px 12px;
+                padding: 8px 12px;
             }
             
             .logo {
@@ -320,13 +360,17 @@
             }
             
             .header-icon {
-                margin-left: 8px;
+                margin-left: 6px;
                 font-size: 1rem;
             }
             
             .menu-toggle {
-                margin-right: 8px;
-                font-size: 1.3rem;
+                margin-right: 6px;
+                font-size: 1.1rem;
+            }
+            
+            .main-content {
+                padding: 10px;
             }
         }
 
@@ -334,14 +378,15 @@
         .auth-container {
             background: white;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             overflow: hidden;
-            margin: 50px auto;
+            margin: 30px auto;
             max-width: 500px;
+            border: 1px solid #f0f0f0;
         }
         
         .auth-header {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, #0a58ca 100%);
             color: white;
             padding: 30px;
             text-align: center;
@@ -359,10 +404,11 @@
             cursor: pointer;
             transition: all 0.3s;
             font-weight: 500;
+            background: #f8f9fa;
         }
         
         .auth-tab.active {
-            background-color: var(--primary);
+            background: var(--primary);
             color: white;
         }
         
@@ -370,83 +416,47 @@
             padding: 30px;
         }
         
-        /* Multi-step form styles */
-        .form-step {
-            display: none;
-        }
-        
-        .form-step.active {
-            display: block;
-            animation: fadeIn 0.5s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .step-indicator {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            position: relative;
-        }
-        
-        .step-indicator::before {
-            content: '';
-            position: absolute;
-            top: 15px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background-color: #e9ecef;
-            z-index: 1;
-        }
-        
-        .step {
-            width: 30px;
-            height: 30px;
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
             border-radius: 50%;
-            background-color: #e9ecef;
-            display: flex;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Real-time indicator */
+        .real-time-indicator {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            position: relative;
-            z-index: 2;
-            font-weight: bold;
-        }
-        
-        .step.active {
-            background-color: var(--primary);
+            background: var(--success);
             color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 10px;
         }
         
-        .step.completed {
-            background-color: var(--success);
-            color: white;
+        .real-time-indicator::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: pulse 2s infinite;
         }
         
-        /* Health questionnaire styles */
-        .health-question {
-            margin-bottom: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            background-color: #f8f9fa;
-        }
-        
-        /* OTP input styles */
-        .otp-container {
-            display: none;
-        }
-        
-        .otp-input {
-            width: 50px;
-            height: 50px;
-            text-align: center;
-            font-size: 1.5rem;
-            margin: 0 5px;
-            border-radius: 8px;
-            border: 1px solid #ced4da;
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
         }
         
         /* Notification Panel */
@@ -457,7 +467,7 @@
             width: 320px;
             height: calc(100vh - 60px);
             background: white;
-            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            box-shadow: -2px 0 15px rgba(0,0,0,0.1);
             transition: right 0.3s ease;
             z-index: 997;
             padding: 20px;
@@ -469,8 +479,14 @@
         }
         
         .notification-item {
-            padding: 10px 0;
+            padding: 12px 0;
             border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .notification-item:hover {
+            background-color: #f8f9fa;
         }
         
         .notification-item:last-child {
@@ -485,7 +501,7 @@
             width: 320px;
             height: calc(100vh - 60px);
             background: white;
-            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            box-shadow: -2px 0 15px rgba(0,0,0,0.1);
             transition: right 0.3s ease;
             z-index: 997;
             padding: 20px;
@@ -507,7 +523,7 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, #0a58ca 100%);
             color: white;
             display: flex;
             align-items: center;
@@ -523,55 +539,58 @@
         
         .content-section.active {
             display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .aqi-legend {
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 0.8rem;
             font-weight: bold;
+            padding: 8px 12px;
         }
-
-        /* Loading Spinner */
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 2s linear infinite;
-            margin: 20px auto;
+        
+        /* Status indicators */
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        
+        .status-live {
+            background: var(--success);
+            color: white;
         }
-
-        .firebase-config {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-
-        .firebase-config h5 {
-            color: #ffa000;
-            margin-bottom: 15px;
+        
+        .status-offline {
+            background: var(--secondary);
+            color: white;
         }
     </style>
 </head>
 <body>
-   
-
-    <!-- Authentication Section (Initially shown) -->
+    <!-- Authentication Section -->
     <div id="auth-section">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-10 col-lg-8">
                     <div class="auth-container">
                         <div class="auth-header">
-                            <h1><i class="fas fa-lungs me-2"></i>AQI Monitor Delhi-NCR</h1>
-                            <p class="mb-0">Create your account or login to access personalized air quality dashboard</p>
+                            <h1><i class="fas fa-wind me-2"></i>AQI Monitor Delhi-NCR</h1>
+                            <p class="mb-0">Real-time air quality monitoring with live data</p>
                         </div>
                         
                         <div class="auth-tabs">
@@ -585,15 +604,15 @@
                                 <h3 class="text-center mb-4">Login to Your Account</h3>
                                 
                                 <div class="alert alert-info">
-                                    <strong>Default Credentials:</strong> username: demo | password: demo123
+                                    <strong>Demo Account:</strong> username: demo | password: demo123
                                 </div>
                                 
                                 <form id="loginForm">
                                     <div class="mb-3">
-                                        <label for="loginEmail" class="form-label">Email</label>
+                                        <label for="loginUsername" class="form-label">Username</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                            <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email" required>
+                                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                            <input type="text" class="form-control" id="loginUsername" placeholder="Enter your username" required>
                                         </div>
                                     </div>
                                     
@@ -614,245 +633,71 @@
                                     
                                     <div class="d-grid gap-2">
                                         <button type="submit" class="btn btn-primary btn-lg">
-                                            <span id="loginSpinner" class="spinner-border spinner-border-sm me-2" style="display: none;"></span>
+                                            <span id="login-spinner" class="loading-spinner" style="display: none;"></span>
                                             Login
                                         </button>
                                     </div>
-                                    
-                                    <div class="text-center mt-3">
-                                        <a href="#" id="forgotPasswordLink">Forgot Password?</a>
-                                    </div>
                                 </form>
-                                
-                                <!-- Forgot Password Form -->
-                                <div id="forgotPasswordForm" class="mt-4" style="display: none;">
-                                    <h5 class="mb-3">Reset Your Password</h5>
-                                    <form id="resetPasswordForm">
-                                        <div class="mb-3">
-                                            <label for="resetEmail" class="form-label">Email Address</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                                <input type="email" class="form-control" id="resetEmail" placeholder="Enter your registered email" required>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="d-grid gap-2 mb-3">
-                                            <button type="button" class="btn btn-outline-primary" id="sendResetLinkBtn">
-                                                <span id="resetSpinner" class="spinner-border spinner-border-sm me-2" style="display: none;"></span>
-                                                Send Reset Link
-                                            </button>
-                                        </div>
-                                        
-                                        <div class="alert alert-info" id="resetMessage" style="display: none;">
-                                            Password reset email sent! Check your inbox.
-                                        </div>
-                                    </form>
-                                    
-                                    <div class="text-center mt-3">
-                                        <a href="#" id="backToLogin">Back to Login</a>
-                                    </div>
-                                </div>
                             </div>
                             
                             <!-- Registration Form -->
                             <div id="register-form" class="auth-panel" style="display: none;">
                                 <h3 class="text-center mb-4">Create Your Account</h3>
                                 
-                                <div class="step-indicator">
-                                    <div class="step active" id="step1">1</div>
-                                    <div class="step" id="step2">2</div>
-                                    <div class="step" id="step3">3</div>
-                                    <div class="step" id="step4">4</div>
-                                </div>
-                                
                                 <form id="registrationForm">
-                                    <!-- Step 1: Personal Details -->
-                                    <div class="form-step active" id="step1-form">
-                                        <h5 class="mb-3">Personal Information</h5>
-                                        
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <label for="fullName" class="form-label">Full Name</label>
-                                                <input type="text" class="form-control" id="fullName" required>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label for="email" class="form-label">Email Address</label>
-                                                <input type="email" class="form-control" id="email" required>
-                                            </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="fullName" class="form-label">Full Name</label>
+                                            <input type="text" class="form-control" id="fullName" required>
                                         </div>
-                                        
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <label for="mobile" class="form-label">Mobile Number</label>
-                                                <input type="tel" class="form-control" id="mobile" required>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label for="dob" class="form-label">Date of Birth</label>
-                                                <input type="date" class="form-control" id="dob" required>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="d-flex justify-content-between mt-4">
-                                            <div></div> <!-- Empty div for spacing -->
-                                            <button type="button" class="btn btn-primary" onclick="nextStep(2)">Next</button>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="username" class="form-label">Username</label>
+                                            <input type="text" class="form-control" id="username" required>
                                         </div>
                                     </div>
                                     
-                                    <!-- Step 2: Address Details -->
-                                    <div class="form-step" id="step2-form">
-                                        <h5 class="mb-3">Address Information</h5>
-                                        
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <label for="state" class="form-label">State</label>
-                                                <select class="form-select" id="state" required>
-                                                    <option value="">Select State</option>
-                                                    <option value="Delhi">Delhi</option>
-                                                    <option value="Haryana">Haryana</option>
-                                                    <option value="Uttar Pradesh">Uttar Pradesh</option>
-                                                    <option value="Rajasthan">Rajasthan</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label for="city" class="form-label">City</label>
-                                                <select class="form-select" id="city" required>
-                                                    <option value="">Select City</option>
-                                                    <!-- Cities will be populated based on state selection -->
-                                                </select>
-                                            </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="email" class="form-label">Email Address</label>
+                                            <input type="email" class="form-control" id="email" required>
                                         </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="address" class="form-label">Full Address</label>
-                                            <textarea class="form-control" id="address" rows="3" required></textarea>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="pincode" class="form-label">Pincode</label>
-                                            <input type="text" class="form-control" id="pincode" maxlength="6" required>
-                                        </div>
-                                        
-                                        <div class="d-flex justify-content-between mt-4">
-                                            <button type="button" class="btn btn-outline-secondary" onclick="prevStep(1)">Previous</button>
-                                            <button type="button" class="btn btn-primary" onclick="nextStep(3)">Next</button>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="mobile" class="form-label">Mobile Number</label>
+                                            <input type="tel" class="form-control" id="mobile" required>
                                         </div>
                                     </div>
                                     
-                                    <!-- Step 3: Health Questionnaire -->
-                                    <div class="form-step" id="step3-form">
-                                        <h5 class="mb-3">Health Information</h5>
-                                        <p class="text-muted">This information helps us provide personalized air quality recommendations.</p>
-                                        
-                                        <div class="health-question">
-                                            <label class="form-label">Do you have any respiratory conditions?</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="respiratory" id="respiratoryYes" value="yes">
-                                                <label class="form-check-label" for="respiratoryYes">Yes</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="respiratory" id="respiratoryNo" value="no" checked>
-                                                <label class="form-check-label" for="respiratoryNo">No</label>
-                                            </div>
-                                            <div class="mt-2" id="respiratoryDetails" style="display: none;">
-                                                <label class="form-label">Please specify:</label>
-                                                <select class="form-select" id="respiratoryCondition">
-                                                    <option value="">Select condition</option>
-                                                    <option value="asthma">Asthma</option>
-                                                    <option value="copd">COPD</option>
-                                                    <option value="bronchitis">Chronic Bronchitis</option>
-                                                    <option value="other">Other</option>
-                                                </select>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="password" class="form-label">Password</label>
+                                            <div class="form-floating">
+                                                <input type="password" class="form-control" id="password" required>
+                                                <span class="password-toggle" onclick="togglePassword('password')">
+                                                    <i class="fas fa-eye"></i>
+                                                </span>
                                             </div>
                                         </div>
-                                        
-                                        <div class="health-question">
-                                            <label class="form-label">Do you have any cardiovascular conditions?</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="cardio" id="cardioYes" value="yes">
-                                                <label class="form-check-label" for="cardioYes">Yes</label>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="confirmPasswordReg" class="form-label">Confirm Password</label>
+                                            <div class="form-floating">
+                                                <input type="password" class="form-control" id="confirmPasswordReg" required>
+                                                <span class="password-toggle" onclick="togglePassword('confirmPasswordReg')">
+                                                    <i class="fas fa-eye"></i>
+                                                </span>
                                             </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="cardio" id="cardioNo" value="no" checked>
-                                                <label class="form-check-label" for="cardioNo">No</label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="health-question">
-                                            <label class="form-label">Are you a smoker?</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="smoker" id="smokerYes" value="yes">
-                                                <label class="form-check-label" for="smokerYes">Yes</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="smoker" id="smokerNo" value="no" checked>
-                                                <label class="form-check-label" for="smokerNo">No</label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="health-question">
-                                            <label class="form-label">How would you describe your activity level?</label>
-                                            <select class="form-select" id="activityLevel">
-                                                <option value="sedentary">Mostly indoors (sedentary)</option>
-                                                <option value="light">Light activity (walking, light exercise)</option>
-                                                <option value="moderate">Moderate activity (regular exercise)</option>
-                                                <option value="high">High activity (athlete, construction worker)</option>
-                                            </select>
-                                        </div>
-                                        
-                                        <div class="health-question">
-                                            <label class="form-label">Age Group</label>
-                                            <select class="form-select" id="ageGroup">
-                                                <option value="child">Under 18</option>
-                                                <option value="young">18-35</option>
-                                                <option value="middle">36-60</option>
-                                                <option value="senior">Over 60</option>
-                                            </select>
-                                        </div>
-                                        
-                                        <div class="d-flex justify-content-between mt-4">
-                                            <button type="button" class="btn btn-outline-secondary" onclick="prevStep(2)">Previous</button>
-                                            <button type="button" class="btn btn-primary" onclick="nextStep(4)">Next</button>
                                         </div>
                                     </div>
                                     
-                                    <!-- Step 4: Account Setup -->
-                                    <div class="form-step" id="step4-form">
-                                        <h5 class="mb-3">Account Setup</h5>
-                                        
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <label for="password" class="form-label">Password</label>
-                                                <div class="form-floating">
-                                                    <input type="password" class="form-control" id="password" required>
-                                                    <span class="password-toggle" onclick="togglePassword('password')">
-                                                        <i class="fas fa-eye"></i>
-                                                    </span>
-                                                </div>
-                                                <div class="form-text">Password must be at least 8 characters long</div>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label for="confirmPasswordReg" class="form-label">Confirm Password</label>
-                                                <div class="form-floating">
-                                                    <input type="password" class="form-control" id="confirmPasswordReg" required>
-                                                    <span class="password-toggle" onclick="togglePassword('confirmPasswordReg')">
-                                                        <i class="fas fa-eye"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="mb-3 form-check">
-                                            <input type="checkbox" class="form-check-input" id="terms" required>
-                                            <label class="form-check-label" for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
-                                        </div>
-                                        
-                                        <div class="d-flex justify-content-between mt-4">
-                                            <button type="button" class="btn btn-outline-secondary" onclick="prevStep(3)">Previous</button>
-                                            <button type="submit" class="btn btn-success">
-                                                <span id="registerSpinner" class="spinner-border spinner-border-sm me-2" style="display: none;"></span>
-                                                Create Account
-                                            </button>
-                                        </div>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="terms" required>
+                                        <label class="form-check-label" for="terms">I agree to the Terms of Service and Privacy Policy</label>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-success btn-lg">
+                                            <span id="register-spinner" class="loading-spinner" style="display: none;"></span>
+                                            Create Account
+                                        </button>
                                     </div>
                                 </form>
                             </div>
@@ -863,7 +708,7 @@
         </div>
     </div>
 
-    <!-- Dashboard Section (Initially hidden) -->
+    <!-- Dashboard Section -->
     <div id="dashboard-section" class="app-container" style="display: none;">
         <!-- Sidebar Overlay -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -878,7 +723,6 @@
                 <li><a href="#" data-section="carbon"><i class="fas fa-leaf"></i> Carbon Footprint</a></li>
                 <li><a href="#" data-section="hospitals"><i class="fas fa-hospital"></i> Nearby Hospitals</a></li>
                 <li><a href="#" data-section="profile"><i class="fas fa-user-cog"></i> Profile Settings</a></li>
-                <li><a href="#" data-section="feedback"><i class="fas fa-comment-dots"></i> Feedback</a></li>
                 <li><a href="#" id="logout-sidebar"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </aside>
@@ -892,13 +736,16 @@
                         <i class="fas fa-bars"></i>
                     </button>
                     <div class="logo">
-                        <i class="fas fa-lungs me-2"></i>AQI Monitor
+                        <div class="logo-icon">
+                            <i class="fas fa-wind"></i>
+                        </div>
+                        AQI Monitor
                     </div>
                 </div>
                 <div class="header-right">
                     <button class="header-icon" id="notificationsBtn">
                         <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
+                        <span class="notification-badge" id="notificationCount">0</span>
                     </button>
                     <button class="header-icon" id="profileBtn">
                         <i class="fas fa-user"></i>
@@ -906,14 +753,17 @@
                 </div>
             </header>
             
-            <!-- Dashboard Content (Default Section) -->
+            <!-- Dashboard Content -->
             <section class="content-section active" id="dashboard-section-content">
                 <!-- Header Section -->
                 <div class="row mb-4">
                     <div class="col-12 text-center">
                         <h1 class="display-5 fw-bold text-primary">Citizens Air Quality Dashboard</h1>
                         <p class="lead text-muted">Real-time monitoring & personalized health recommendations</p>
-                        <small class="text-muted">Last updated: <span id="lastUpdated">Loading...</span> | Auto-refresh every 5 minutes</small>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <small class="text-muted">Last updated: <span id="lastUpdated">Loading...</span></small>
+                            <span class="real-time-indicator">Live</span>
+                        </div>
                     </div>
                 </div>
 
@@ -924,7 +774,7 @@
                             <i class="fas fa-exclamation-triangle me-3 fa-2x"></i>
                             <div>
                                 <h5 class="alert-heading mb-1">Health Alert</h5>
-                                <p class="mb-0" id="alertMessage">Current air quality may affect sensitive individuals. Limit outdoor activities.</p>
+                                <p class="mb-0" id="alertMessage">Current air quality may affect sensitive individuals.</p>
                             </div>
                         </div>
                     </div>
@@ -936,12 +786,12 @@
                         <div class="dashboard-card">
                             <div class="card-body text-center py-4">
                                 <h3 class="text-muted mb-3">Current Average AQI - Delhi NCR</h3>
-                                <div class="display-1 fw-bold mb-3" id="mainAQI">Loading...</div>
-                                <div class="badge fs-5 px-4 py-2 mb-4" id="mainAQICategory">Calculating...</div>
-                                <div class="progress mb-3" style="height: 10px;">
+                                <div class="display-1 fw-bold mb-3" id="mainAQI">--</div>
+                                <div class="badge fs-5 px-4 py-2 mb-4" id="mainAQICategory">Loading...</div>
+                                <div class="progress mb-3" style="height: 12px;">
                                     <div class="progress-bar" role="progressbar" id="aqiProgress"></div>
                                 </div>
-                                <p class="text-muted" id="aqiDescription">Analyzing air quality data...</p>
+                                <p class="text-muted" id="aqiDescription">Fetching real-time data...</p>
                             </div>
                         </div>
                     </div>
@@ -987,30 +837,19 @@
                     </div>
                 </div>
 
-                <!-- 72-Hour Forecast -->
+                <!-- Pollutant Breakdown -->
                 <div class="row mb-4">
                     <div class="col-12">
                         <div class="dashboard-card">
                             <div class="card-header">
-                                <h4 class="mb-0"><i class="fas fa-chart-line me-2"></i>72-Hour AQI Forecast</h4>
+                                <h4 class="mb-0"><i class="fas fa-flask me-2"></i>Current Pollutant Levels</h4>
                             </div>
                             <div class="card-body">
-                                <canvas id="forecastChart" height="100"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Station Details -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h4 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Nearby Station Air Quality</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-3" id="stationDetails">
-                                    <!-- Station cards will be loaded here -->
+                                <div class="row" id="pollutantLevels">
+                                    <div class="col-12 text-center">
+                                        <div class="loading-spinner"></div>
+                                        <p>Loading pollutant data...</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1026,7 +865,7 @@
                             </div>
                             <div class="card-body">
                                 <div id="healthRecommendations">
-                                    <!-- Recommendations will be loaded here -->
+                                    <p>Loading health recommendations based on current AQI...</p>
                                 </div>
                             </div>
                         </div>
@@ -1038,63 +877,95 @@
                             </div>
                             <div class="card-body">
                                 <div id="activitySuggestions">
-                                    <!-- Activity suggestions will be loaded here -->
+                                    <p>Loading activity suggestions...</p>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pollutant Breakdown -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h4 class="mb-0"><i class="fas fa-flask me-2"></i>Current Pollutant Levels</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="row" id="pollutantLevels">
-                                    <!-- Pollutant data will be loaded here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- SOS Alert Note -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="alert alert-info">
-                            <h5><i class="fas fa-info-circle me-2"></i>Automatic SOS Alert System</h5>
-                            <p class="mb-0">In case of consistently bad AQI levels (based on current and forecasted data), an automatic SOS alert will be sent to nearby hospitals. This ensures they can prepare necessary resources like beds and oxygen cylinders in advance.</p>
                         </div>
                     </div>
                 </div>
             </section>
             
-            <!-- Other sections remain the same as in your original code -->
-            <!-- Notices Board, Complaints, AQI Map, Carbon Footprint, Nearby Hospitals, Profile Settings, Feedback sections -->
-            <!-- ... (content unchanged from your original code) ... -->
+            <!-- Other sections remain similar but integrated with real backend -->
+            <!-- Notices Board Section -->
+            <section class="content-section" id="notices-section-content">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="fw-bold text-primary"><i class="fas fa-bullhorn me-2"></i>Notices Board</h2>
+                        <p class="text-muted">Important alerts and community updates</p>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Recent Notifications</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="notificationsList">
+                            <div class="text-center text-muted">
+                                <div class="loading-spinner"></div>
+                                <p>Loading notifications...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
             
+            <!-- Complaints Section -->
+            <section class="content-section" id="complaints-section-content">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="fw-bold text-primary"><i class="fas fa-exclamation-triangle me-2"></i>Complaint Section</h2>
+                        <p class="text-muted">Report environmental violations in your area</p>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Submit New Complaint</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="complaintForm">
+                            <div class="mb-3">
+                                <label class="form-label">Complaint Type</label>
+                                <select class="form-select" id="complaintType" required>
+                                    <option value="">Select type</option>
+                                    <option value="construction">Illegal Construction</option>
+                                    <option value="stubble">Stubble Burning</option>
+                                    <option value="industry">Illegal Industry</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Location</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="complaintLocation" placeholder="Enter location" required>
+                                    <button type="button" class="btn btn-outline-primary" id="getCurrentLocation">
+                                        <i class="fas fa-location-arrow"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" id="complaintDescription" rows="4" placeholder="Describe the issue in detail" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <span id="complaint-spinner" class="loading-spinner" style="display: none;"></span>
+                                Submit Complaint
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Add other sections similarly with real backend integration -->
         </div>
         
         <!-- Notification Panel -->
         <div class="notification-panel" id="notificationPanel">
             <h5 class="mb-3">Notifications</h5>
-            <div class="notification-item">
-                <div class="fw-bold">Health Alert</div>
-                <div class="small text-muted">AQI in your area has reached unhealthy levels</div>
-                <div class="small text-muted">2 hours ago</div>
-            </div>
-            <div class="notification-item">
-                <div class="fw-bold">Complaint Update</div>
-                <div class="small text-muted">Your complaint #45632 has been resolved</div>
-                <div class="small text-muted">1 day ago</div>
-            </div>
-            <div class="notification-item">
-                <div class="fw-bold">Community Event</div>
-                <div class="small text-muted">Tree plantation drive this weekend in your area</div>
-                <div class="small text-muted">3 days ago</div>
+            <div id="notificationPanelContent">
+                <div class="text-center text-muted">
+                    <p>Loading notifications...</p>
+                </div>
             </div>
         </div>
         
@@ -1104,8 +975,8 @@
                 <div class="profile-avatar">
                     <i class="fas fa-user"></i>
                 </div>
-                <h5 id="profileUserName">Loading...</h5>
-                <p class="text-muted" id="profileUserEmail">Loading...</p>
+                <h5 id="profileUserName">User</h5>
+                <p class="text-muted" id="profileUserLocation">Delhi, India</p>
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
@@ -1118,9 +989,6 @@
                     <i class="fas fa-shield-alt me-2"></i>Privacy & Security
                 </li>
                 <li class="list-group-item">
-                    <i class="fas fa-question-circle me-2"></i>Help & Support
-                </li>
-                <li class="list-group-item">
                     <i class="fas fa-sign-out-alt me-2"></i>Logout
                 </li>
             </ul>
@@ -1131,484 +999,576 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Leaflet JS for Maps -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <!-- Firebase Authentication -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <!-- Firebase Firestore -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <!-- Firebase Storage -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     
     <script>
-        // =============================================
-        // FIREBASE CONFIGURATION AND INITIALIZATION
-        // =============================================
-        
-        // Default Firebase configuration (replace with your own)
-        const DEFAULT_FIREBASE_CONFIG = {
-         apiKey: "AIzaSyC-UoKd0kM8EnviJBWlUFI2NmNAKzmWVXo",
-         authDomain: "aqi-monitor-delhi-ncr.firebaseapp.com",
-         projectId: "aqi-monitor-delhi-ncr",
-         storageBucket: "aqi-monitor-delhi-ncr.firebasestorage.app",
-         messagingSenderId: "1030677751725",
-         appId: "1:1030677751725:web:5d976181ad6151b5562324"
-        };
+        // Backend Service Integration
+        const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxgNG3_Ddnz8nh2jDsdTatCNW83d4RLKnVEI0gYG8-vNIXJ5lYHNvXi22Gc43Y8xQc/exec'; // Replace with your deployed URL
 
-        class FirebaseManager {
+        class BackendService {
             constructor() {
-                this.isInitialized = false;
-                this.firebaseConfig = null;
-                this.init();
+                this.baseUrl = BACKEND_URL;
             }
 
-            init() {
-                // Try to load saved Firebase config from localStorage
-                const savedConfig = localStorage.getItem('firebaseConfig');
-                
-                if (savedConfig) {
-                    try {
-                        this.firebaseConfig = JSON.parse(savedConfig);
-                        this.initializeFirebase();
-                    } catch (error) {
-                        console.error('Error parsing saved Firebase config:', error);
-                        this.showFirebaseSetup();
+            async makeRequest(action, data = null) {
+                try {
+                    const formData = new FormData();
+                    formData.append('action', action);
+                    
+                    if (data) {
+                        formData.append('data', JSON.stringify(data));
                     }
-                } else {
-                    // Use default config for demo purposes
-                    this.firebaseConfig = DEFAULT_FIREBASE_CONFIG;
-                    this.initializeFirebase();
-                    this.showFirebaseSetup(); // Show setup instructions for first-time users
-                }
-            }
 
-            initializeFirebase() {
-                try {
-                    // Initialize Firebase
-                    firebase.initializeApp(this.firebaseConfig);
-                    
-                    // Initialize Firebase services
-                    this.auth = firebase.auth();
-                    this.db = firebase.firestore();
-                    this.storage = firebase.storage();
-                    
-                    this.isInitialized = true;
-                    console.log('Firebase initialized successfully');
-                    
-                    // Hide setup instructions if shown
-                    document.getElementById('firebase-setup').style.display = 'none';
-                    
-                    // Set up auth state listener
-                    this.setupAuthListener();
-                    
-                } catch (error) {
-                    console.error('Firebase initialization error:', error);
-                    this.showFirebaseSetup();
-                }
-            }
-
-            showFirebaseSetup() {
-                document.getElementById('firebase-setup').style.display = 'block';
-                document.getElementById('firebaseConfigInput').value = JSON.stringify(this.firebaseConfig, null, 2);
-            }
-
-            setupAuthListener() {
-                this.auth.onAuthStateChanged((user) => {
-                    if (user) {
-                        // User is signed in
-                        console.log('User signed in:', user.email);
-                        this.updateUserProfile(user);
-                        this.loadUserData(user.uid);
-                    } else {
-                        // User is signed out
-                        console.log('User signed out');
-                        this.showAuthSection();
-                    }
-                });
-            }
-
-            updateUserProfile(user) {
-                document.getElementById('profileUserName').textContent = user.displayName || user.email;
-                document.getElementById('profileUserEmail').textContent = user.email;
-            }
-
-            async loadUserData(userId) {
-                try {
-                    const userDoc = await this.db.collection('users').doc(userId).get();
-                    if (userDoc.exists) {
-                        const userData = userDoc.data();
-                        // Load user preferences and health data
-                        if (userData.healthProfile) {
-                            localStorage.setItem('healthProfile', JSON.stringify(userData.healthProfile));
-                        }
-                        if (userData.preferences) {
-                            localStorage.setItem('userPreferences', JSON.stringify(userData.preferences));
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error loading user data:', error);
-                }
-            }
-
-            async saveUserData(userId, data) {
-                if (!this.isInitialized) return;
-                
-                try {
-                    await this.db.collection('users').doc(userId).set(data, { merge: true });
-                    console.log('User data saved successfully');
-                } catch (error) {
-                    console.error('Error saving user data:', error);
-                }
-            }
-
-            async saveComplaint(complaintData) {
-                if (!this.isInitialized) return null;
-                
-                try {
-                    const complaintRef = await this.db.collection('complaints').add({
-                        ...complaintData,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        status: 'pending',
-                        userId: this.auth.currentUser.uid
+                    const response = await fetch(this.baseUrl, {
+                        method: 'POST',
+                        body: formData
                     });
-                    
-                    return complaintRef.id;
+
+                    return await response.json();
                 } catch (error) {
-                    console.error('Error saving complaint:', error);
+                    console.error('Backend request failed:', error);
                     throw error;
-                }
-            }
-
-            async uploadComplaintImage(file, complaintId) {
-                if (!this.isInitialized) return null;
-                
-                try {
-                    const storageRef = this.storage.ref();
-                    const imageRef = storageRef.child(`complaints/${complaintId}/${file.name}`);
-                    const snapshot = await imageRef.put(file);
-                    const downloadURL = await snapshot.ref.getDownloadURL();
-                    return downloadURL;
-                } catch (error) {
-                    console.error('Error uploading image:', error);
-                    throw error;
-                }
-            }
-        }
-
-        // =============================================
-        // AUTHENTICATION SERVICE WITH FIREBASE
-        // =============================================
-
-        class AuthService {
-            constructor(firebaseManager) {
-                this.firebaseManager = firebaseManager;
-            }
-
-            async login(email, password) {
-                try {
-                    const userCredential = await this.firebaseManager.auth.signInWithEmailAndPassword(email, password);
-                    return { success: true, user: userCredential.user };
-                } catch (error) {
-                    console.error('Login error:', error);
-                    return { success: false, error: this.getAuthErrorMessage(error.code) };
                 }
             }
 
             async register(userData) {
-                try {
-                    // Create user account
-                    const userCredential = await this.firebaseManager.auth.createUserWithEmailAndPassword(
-                        userData.email, 
-                        userData.password
-                    );
+                return await this.makeRequest('register', userData);
+            }
 
-                    // Update user profile
-                    await userCredential.user.updateProfile({
-                        displayName: userData.fullName
+            async login(username, password) {
+                const formData = new FormData();
+                formData.append('action', 'login');
+                formData.append('username', username);
+                formData.append('password', password);
+
+                const response = await fetch(this.baseUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                return await response.json();
+            }
+
+            async getAQIData() {
+                return await this.makeRequest('getAQIData');
+            }
+
+            async submitComplaint(complaintData) {
+                return await this.makeRequest('submitComplaint', complaintData);
+            }
+
+            async getNotifications(userID) {
+                const formData = new FormData();
+                formData.append('action', 'getNotifications');
+                formData.append('userID', userID);
+
+                const response = await fetch(this.baseUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                return await response.json();
+            }
+
+            async getNearbyHospitals(lat, lng, radius = 10) {
+                const formData = new FormData();
+                formData.append('action', 'getHospitals');
+                formData.append('lat', lat);
+                formData.append('lng', lng);
+                formData.append('radius', radius);
+
+                const response = await fetch(this.baseUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                return await response.json();
+            }
+        }
+
+        // Initialize backend service
+        const backendService = new BackendService();
+
+        // Dashboard functionality
+        class Dashboard {
+            constructor() {
+                this.currentUser = null;
+                this.autoRefreshInterval = null;
+                this.aqiData = null;
+            }
+
+            async initialize() {
+                await this.loadDashboardData();
+                this.startAutoRefresh();
+                this.setupEventListeners();
+            }
+
+            async loadDashboardData() {
+                try {
+                    // Show loading states
+                    this.showLoadingStates();
+
+                    // Fetch AQI data from backend
+                    const result = await backendService.getAQIData();
+                    
+                    if (result.success) {
+                        this.aqiData = result.data;
+                        this.updateAQIDisplay(this.aqiData);
+                        this.updateWeatherInfo(result.weather);
+                        this.updatePollutantLevels(this.aqiData);
+                        this.updateHealthRecommendations(this.aqiData);
+                        
+                        document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+                    } else {
+                        this.showError('Failed to load AQI data');
+                    }
+
+                    // Load notifications if user is logged in
+                    if (this.currentUser) {
+                        await this.loadNotifications();
+                    }
+
+                } catch (error) {
+                    console.error('Error loading dashboard data:', error);
+                    this.showError('Unable to fetch real-time data');
+                }
+            }
+
+            showLoadingStates() {
+                document.getElementById('mainAQI').textContent = '--';
+                document.getElementById('mainAQICategory').textContent = 'Loading...';
+                document.getElementById('aqiDescription').textContent = 'Fetching real-time data...';
+            }
+
+            showError(message) {
+                document.getElementById('mainAQI').textContent = 'Error';
+                document.getElementById('mainAQICategory').textContent = 'Data unavailable';
+                document.getElementById('aqiDescription').textContent = message;
+            }
+
+            updateAQIDisplay(aqiData) {
+                const aqi = aqiData.aqi;
+                const category = this.getAQICategory(aqi);
+                const description = aqiData.healthMessage;
+                
+                document.getElementById('mainAQI').textContent = aqi;
+                document.getElementById('mainAQICategory').textContent = category;
+                document.getElementById('mainAQICategory').className = `badge fs-5 px-4 py-2 mb-4 ${this.getAQIClass(aqi)}`;
+                document.getElementById('aqiDescription').textContent = description;
+                
+                // Update progress bar
+                const progress = Math.min((aqi / 500) * 100, 100);
+                document.getElementById('aqiProgress').style.width = `${progress}%`;
+                document.getElementById('aqiProgress').className = `progress-bar ${this.getAQIClass(aqi)}`;
+                
+                // Show/hide health alert
+                this.toggleHealthAlert(aqi);
+            }
+
+            getAQICategory(aqi) {
+                if (aqi <= 50) return 'Good';
+                if (aqi <= 100) return 'Moderate';
+                if (aqi <= 150) return 'Unhealthy for Sensitive Groups';
+                if (aqi <= 200) return 'Unhealthy';
+                if (aqi <= 300) return 'Very Unhealthy';
+                return 'Hazardous';
+            }
+
+            getAQIClass(aqi) {
+                if (aqi <= 50) return 'aqi-good';
+                if (aqi <= 100) return 'aqi-moderate';
+                if (aqi <= 150) return 'aqi-unhealthy-sensitive';
+                if (aqi <= 200) return 'aqi-unhealthy';
+                if (aqi <= 300) return 'aqi-very-unhealthy';
+                return 'aqi-hazardous';
+            }
+
+            toggleHealthAlert(aqi) {
+                const alertElement = document.getElementById('healthAlert');
+                const alertMessage = document.getElementById('alertMessage');
+                
+                if (aqi > 100) {
+                    let message = 'Current air quality may affect sensitive individuals. Limit outdoor activities.';
+                    
+                    if (aqi > 150) {
+                        message = 'Air quality is unhealthy. Everyone may begin to experience health effects.';
+                    }
+                    
+                    if (aqi > 200) {
+                        message = 'Health alert! Avoid outdoor activities. Sensitive groups should avoid all physical activity outdoors.';
+                    }
+                    
+                    alertMessage.textContent = message;
+                    alertElement.style.display = 'block';
+                } else {
+                    alertElement.style.display = 'none';
+                }
+            }
+
+            updateWeatherInfo(weatherData) {
+                document.getElementById('temperature').textContent = `${Math.round(weatherData.temperature)}°C`;
+                document.getElementById('humidity').textContent = `${weatherData.humidity}%`;
+                document.getElementById('windSpeed').textContent = `${weatherData.windSpeed} m/s`;
+                document.getElementById('visibility').textContent = `${weatherData.visibility} km`;
+            }
+
+            updatePollutantLevels(aqiData) {
+                const pollutants = document.getElementById('pollutantLevels');
+                
+                const pollutantInfo = [
+                    { name: 'PM2.5', value: aqiData.pm25, unit: 'μg/m³', max: 250 },
+                    { name: 'PM10', value: aqiData.pm10, unit: 'μg/m³', max: 400 },
+                    { name: 'Ozone', value: aqiData.o3, unit: 'ppb', max: 200 },
+                    { name: 'NO₂', value: aqiData.no2, unit: 'ppb', max: 150 },
+                    { name: 'SO₂', value: aqiData.so2, unit: 'ppb', max: 100 },
+                    { name: 'CO', value: aqiData.co, unit: 'ppm', max: 10 }
+                ];
+                
+                let pollutantsHtml = '';
+                
+                pollutantInfo.forEach(pollutant => {
+                    if (pollutant.value > 0) {
+                        const percentage = Math.min((pollutant.value / pollutant.max) * 100, 100);
+                        
+                        pollutantsHtml += `
+                            <div class="col-12 col-sm-6 col-lg-4 mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span><strong>${pollutant.name}</strong></span>
+                                    <span class="badge bg-secondary">${pollutant.value} ${pollutant.unit}</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-warning" style="width: ${percentage}%"></div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                pollutants.innerHTML = pollutantsHtml || '<div class="col-12 text-center text-muted">No pollutant data available</div>';
+            }
+
+            updateHealthRecommendations(aqiData) {
+                const aqi = aqiData.aqi;
+                const recommendations = document.getElementById('healthRecommendations');
+                const activities = document.getElementById('activitySuggestions');
+                
+                let healthHtml = '';
+                let activityHtml = '';
+                
+                if (aqi <= 50) {
+                    healthHtml = `
+                        <ul class="mb-0">
+                            <li>Air quality is good. Enjoy your normal activities.</li>
+                            <li>Ideal day for outdoor exercise and activities.</li>
+                            <li>No special precautions needed for most people.</li>
+                        </ul>
+                    `;
+                    
+                    activityHtml = `
+                        <ul class="mb-0">
+                            <li>Perfect for outdoor sports and activities</li>
+                            <li>Great day for hiking or cycling</li>
+                            <li>Ideal for opening windows for ventilation</li>
+                        </ul>
+                    `;
+                } else if (aqi <= 100) {
+                    healthHtml = `
+                        <ul class="mb-0">
+                            <li>Air quality is acceptable for most individuals.</li>
+                            <li>Unusually sensitive people should consider reducing prolonged outdoor exertion.</li>
+                            <li>People with asthma should have quick-relief medicine handy.</li>
+                        </ul>
+                    `;
+                    
+                    activityHtml = `
+                        <ul class="mb-0">
+                            <li>Generally safe for outdoor activities</li>
+                            <li>Consider shorter duration for intense exercise</li>
+                            <li>Good day for gardening or light outdoor work</li>
+                        </ul>
+                    `;
+                } else {
+                    healthHtml = `
+                        <ul class="mb-0">
+                            <li>Everyone should reduce prolonged outdoor exertion.</li>
+                            <li>Sensitive groups should avoid all outdoor physical activity.</li>
+                            <li>Consider wearing an N95 mask if you must go outside.</li>
+                            <li>Use air purifiers indoors and keep windows closed.</li>
+                        </ul>
+                    `;
+                    
+                    activityHtml = `
+                        <ul class="mb-0">
+                            <li>Avoid all outdoor physical activities</li>
+                            <li>Reschedule outdoor events if possible</li>
+                            <li>Use indoor fitness facilities instead</li>
+                            <li>Keep windows and doors closed</li>
+                        </ul>
+                    `;
+                }
+                
+                recommendations.innerHTML = healthHtml;
+                activities.innerHTML = activityHtml;
+            }
+
+            async loadNotifications() {
+                try {
+                    const result = await backendService.getNotifications(this.currentUser.userID);
+                    
+                    if (result.success) {
+                        this.updateNotificationDisplay(result.notifications);
+                    }
+                } catch (error) {
+                    console.error('Error loading notifications:', error);
+                }
+            }
+
+            updateNotificationDisplay(notifications) {
+                const notificationsList = document.getElementById('notificationsList');
+                const notificationPanel = document.getElementById('notificationPanelContent');
+                const notificationCount = document.getElementById('notificationCount');
+                
+                if (notifications.length === 0) {
+                    notificationsList.innerHTML = '<div class="text-center text-muted"><p>No new notifications</p></div>';
+                    notificationPanel.innerHTML = '<div class="text-center text-muted"><p>No new notifications</p></div>';
+                    notificationCount.textContent = '0';
+                    return;
+                }
+                
+                let notificationsHtml = '';
+                let panelHtml = '';
+                
+                notifications.forEach(notification => {
+                    const timeAgo = this.getTimeAgo(notification.createdAt);
+                    
+                    notificationsHtml += `
+                        <div class="notification-item">
+                            <div class="fw-bold">${notification.title}</div>
+                            <div class="small text-muted">${notification.message}</div>
+                            <div class="small text-muted">${timeAgo}</div>
+                        </div>
+                    `;
+                    
+                    panelHtml += `
+                        <div class="notification-item">
+                            <div class="fw-bold">${notification.title}</div>
+                            <div class="small text-muted">${notification.message}</div>
+                            <div class="small text-muted">${timeAgo}</div>
+                        </div>
+                    `;
+                });
+                
+                notificationsList.innerHTML = notificationsHtml;
+                notificationPanel.innerHTML = panelHtml;
+                notificationCount.textContent = notifications.length.toString();
+            }
+
+            getTimeAgo(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMs / 3600000);
+                const diffDays = Math.floor(diffMs / 86400000);
+                
+                if (diffMins < 1) return 'Just now';
+                if (diffMins < 60) return `${diffMins} minutes ago`;
+                if (diffHours < 24) return `${diffHours} hours ago`;
+                return `${diffDays} days ago`;
+            }
+
+            setupEventListeners() {
+                // Complaint form submission
+                document.getElementById('complaintForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await this.submitComplaint();
+                });
+
+                // Current location button
+                document.getElementById('getCurrentLocation').addEventListener('click', () => {
+                    this.getCurrentLocation();
+                });
+            }
+
+            async submitComplaint() {
+                try {
+                    const complaintType = document.getElementById('complaintType').value;
+                    const location = document.getElementById('complaintLocation').value;
+                    const description = document.getElementById('complaintDescription').value;
+                    
+                    if (!complaintType || !location || !description) {
+                        alert('Please fill in all fields');
+                        return;
+                    }
+
+                    const spinner = document.getElementById('complaint-spinner');
+                    spinner.style.display = 'inline-block';
+
+                    const result = await backendService.submitComplaint({
+                        userID: this.currentUser.userID,
+                        type: complaintType,
+                        location: { lat: 0, lng: 0 }, // In real app, get from geolocation
+                        description: description
                     });
 
-                    // Save additional user data to Firestore
-                    const userProfile = {
-                        fullName: userData.fullName,
-                        email: userData.email,
-                        mobile: userData.mobile,
-                        dob: userData.dob,
-                        address: {
-                            state: userData.state,
-                            city: userData.city,
-                            fullAddress: userData.address,
-                            pincode: userData.pincode
+                    spinner.style.display = 'none';
+
+                    if (result.success) {
+                        alert(`Complaint submitted successfully! Tracking ID: ${result.complaintID}`);
+                        document.getElementById('complaintForm').reset();
+                    } else {
+                        alert('Error submitting complaint: ' + result.error);
+                    }
+
+                } catch (error) {
+                    console.error('Error submitting complaint:', error);
+                    alert('Error submitting complaint. Please try again.');
+                    document.getElementById('complaint-spinner').style.display = 'none';
+                }
+            }
+
+            getCurrentLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
+                            document.getElementById('complaintLocation').value = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
                         },
-                        healthProfile: {
-                            respiratoryCondition: userData.respiratoryCondition || 'none',
-                            cardiovascularCondition: userData.cardiovascularCondition || false,
-                            smoker: userData.smoker || false,
-                            activityLevel: userData.activityLevel || 'moderate',
-                            ageGroup: userData.ageGroup || 'young'
-                        },
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    };
-
-                    await this.firebaseManager.saveUserData(userCredential.user.uid, userProfile);
-
-                    return { success: true, user: userCredential.user };
-                } catch (error) {
-                    console.error('Registration error:', error);
-                    return { success: false, error: this.getAuthErrorMessage(error.code) };
+                        (error) => {
+                            alert('Unable to get your location. Please enter manually.');
+                        }
+                    );
+                } else {
+                    alert('Geolocation is not supported by this browser.');
                 }
             }
 
-            async resetPassword(email) {
-                try {
-                    await this.firebaseManager.auth.sendPasswordResetEmail(email);
-                    return { success: true };
-                } catch (error) {
-                    console.error('Password reset error:', error);
-                    return { success: false, error: this.getAuthErrorMessage(error.code) };
-                }
+            startAutoRefresh() {
+                // Refresh every 5 minutes
+                this.autoRefreshInterval = setInterval(() => {
+                    this.loadDashboardData();
+                }, 300000);
             }
 
-            async logout() {
-                try {
-                    await this.firebaseManager.auth.signOut();
-                    return { success: true };
-                } catch (error) {
-                    console.error('Logout error:', error);
-                    return { success: false, error: error.message };
+            stopAutoRefresh() {
+                if (this.autoRefreshInterval) {
+                    clearInterval(this.autoRefreshInterval);
                 }
-            }
-
-            getAuthErrorMessage(errorCode) {
-                const errorMessages = {
-                    'auth/invalid-email': 'Invalid email address format.',
-                    'auth/user-disabled': 'This account has been disabled.',
-                    'auth/user-not-found': 'No account found with this email.',
-                    'auth/wrong-password': 'Incorrect password.',
-                    'auth/email-already-in-use': 'An account with this email already exists.',
-                    'auth/weak-password': 'Password should be at least 6 characters.',
-                    'auth/network-request-failed': 'Network error. Please check your connection.'
-                };
-                
-                return errorMessages[errorCode] || 'An unexpected error occurred. Please try again.';
             }
         }
 
-        // =============================================
-        // APPLICATION INITIALIZATION
-        // =============================================
+        // Initialize dashboard
+        let dashboard = null;
 
-        // Global instances
-        let firebaseManager;
-        let authService;
-        let dashboard;
-
+        // Authentication and UI Management
         document.addEventListener('DOMContentLoaded', function() {
-            initializeApplication();
-        });
-
-        function initializeApplication() {
-            // Initialize Firebase Manager
-            firebaseManager = new FirebaseManager();
-            authService = new AuthService(firebaseManager);
-            
-            // Setup Firebase config save handler
-            document.getElementById('saveFirebaseConfig').addEventListener('click', saveFirebaseConfig);
-            
-            // Initialize authentication UI
             initializeAuth();
             setupNavigation();
-        }
-
-        function saveFirebaseConfig() {
-            try {
-                const configInput = document.getElementById('firebaseConfigInput').value;
-                const config = JSON.parse(configInput);
-                localStorage.setItem('firebaseConfig', configInput);
-                firebaseManager.firebaseConfig = config;
-                firebaseManager.initializeFirebase();
-                alert('Firebase configuration saved successfully!');
-            } catch (error) {
-                alert('Invalid Firebase configuration. Please check the format.');
-            }
-        }
-
-        // =============================================
-        // AUTHENTICATION UI FUNCTIONS
-        // =============================================
+        });
 
         function initializeAuth() {
             // Tab switching
-            document.getElementById('login-tab').addEventListener('click', () => switchTab('login'));
-            document.getElementById('register-tab').addEventListener('click', () => switchTab('register'));
+            document.getElementById('login-tab').addEventListener('click', function() {
+                switchTab('login');
+            });
             
-            // Forgot password functionality
-            document.getElementById('forgotPasswordLink').addEventListener('click', showForgotPassword);
-            document.getElementById('backToLogin').addEventListener('click', showLoginForm);
-            
-            // Form submissions
-            document.getElementById('loginForm').addEventListener('submit', handleLogin);
-            document.getElementById('resetPasswordForm').addEventListener('submit', handlePasswordReset);
-            document.getElementById('registrationForm').addEventListener('submit', handleRegistration);
-            
-            // State-City mapping
-            initializeStateCityMapping();
-            
-            // Respiratory condition toggle
-            initializeHealthFormToggles();
+            document.getElementById('register-tab').addEventListener('click', function() {
+                switchTab('register');
+            });
+
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await loginUser();
+            });
+
+            // Registration form
+            document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await registerUser();
+            });
         }
 
-        async function handleLogin(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
+        async function loginUser() {
+            const username = document.getElementById('loginUsername').value;
             const password = document.getElementById('loginPassword').value;
-            const loginSpinner = document.getElementById('loginSpinner');
-            const loginButton = e.target.querySelector('button[type="submit"]');
             
-            // Show loading state
-            loginSpinner.style.display = 'inline-block';
-            loginButton.disabled = true;
-            
-            const result = await authService.login(email, password);
-            
-            // Hide loading state
-            loginSpinner.style.display = 'none';
-            loginButton.disabled = false;
-            
-            if (result.success) {
-                showDashboard();
-            } else {
-                alert('Login failed: ' + result.error);
-            }
-        }
-
-        async function handleRegistration(e) {
-            e.preventDefault();
-            
-            if (!validateRegistrationForm()) {
+            if (!username || !password) {
+                alert('Please enter username and password');
                 return;
             }
-            
-            const formData = collectRegistrationData();
-            const registerSpinner = document.getElementById('registerSpinner');
-            const registerButton = e.target.querySelector('button[type="submit"]');
-            
-            // Show loading state
-            registerSpinner.style.display = 'inline-block';
-            registerButton.disabled = true;
-            
-            const result = await authService.register(formData);
-            
-            // Hide loading state
-            registerSpinner.style.display = 'none';
-            registerButton.disabled = false;
-            
-            if (result.success) {
-                alert('Registration successful! Welcome to AQI Monitor.');
-                showDashboard();
-            } else {
-                alert('Registration failed: ' + result.error);
+
+            const spinner = document.getElementById('login-spinner');
+            spinner.style.display = 'inline-block';
+
+            try {
+                const result = await backendService.login(username, password);
+                
+                spinner.style.display = 'none';
+
+                if (result.success) {
+                    // Store user data
+                    localStorage.setItem('currentUser', JSON.stringify(result.userData));
+                    showDashboard(result.userData);
+                } else {
+                    alert('Login failed: ' + result.error);
+                }
+            } catch (error) {
+                spinner.style.display = 'none';
+                alert('Login error: ' + error.message);
             }
         }
 
-        async function handlePasswordReset(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('resetEmail').value;
-            const resetSpinner = document.getElementById('resetSpinner');
-            const resetButton = document.getElementById('sendResetLinkBtn');
-            const resetMessage = document.getElementById('resetMessage');
-            
-            // Show loading state
-            resetSpinner.style.display = 'inline-block';
-            resetButton.disabled = true;
-            
-            const result = await authService.resetPassword(email);
-            
-            // Hide loading state
-            resetSpinner.style.display = 'none';
-            resetButton.disabled = false;
-            
-            if (result.success) {
-                resetMessage.style.display = 'block';
-                setTimeout(() => {
-                    showLoginForm();
-                }, 3000);
-            } else {
-                alert('Password reset failed: ' + result.error);
-            }
-        }
-
-        function collectRegistrationData() {
-            return {
+        async function registerUser() {
+            const formData = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
                 fullName: document.getElementById('fullName').value,
                 email: document.getElementById('email').value,
                 mobile: document.getElementById('mobile').value,
-                dob: document.getElementById('dob').value,
-                state: document.getElementById('state').value,
-                city: document.getElementById('city').value,
-                address: document.getElementById('address').value,
-                pincode: document.getElementById('pincode').value,
-                respiratoryCondition: document.getElementById('respiratoryCondition').value || 'none',
-                cardiovascularCondition: document.querySelector('input[name="cardio"]:checked').value === 'yes',
-                smoker: document.querySelector('input[name="smoker"]:checked').value === 'yes',
-                activityLevel: document.getElementById('activityLevel').value,
-                ageGroup: document.getElementById('ageGroup').value,
-                password: document.getElementById('password').value
+                healthProfile: {
+                    respiratoryCondition: 'none',
+                    cardiovascularCondition: false,
+                    smoker: false,
+                    activityLevel: 'moderate',
+                    ageGroup: 'young'
+                }
             };
-        }
 
-        function validateRegistrationForm() {
+            // Validate passwords match
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPasswordReg').value;
             
             if (password !== confirmPassword) {
                 alert('Passwords do not match');
-                return false;
+                return;
             }
-            
+
             if (password.length < 6) {
                 alert('Password must be at least 6 characters long');
-                return false;
+                return;
             }
-            
-            return true;
-        }
 
-        // =============================================
-        // DASHBOARD AND NAVIGATION FUNCTIONS
-        // =============================================
+            const spinner = document.getElementById('register-spinner');
+            spinner.style.display = 'inline-block';
 
-        function showDashboard() {
-            document.getElementById('auth-section').style.display = 'none';
-            document.getElementById('dashboard-section').style.display = 'flex';
-            document.getElementById('firebase-setup').style.display = 'none';
-            
-            // Initialize dashboard if not already done
-            if (!dashboard) {
-                // You would initialize your dashboard here
-                console.log('Dashboard initialized');
-            }
-        }
+            try {
+                const result = await backendService.register(formData);
+                
+                spinner.style.display = 'none';
 
-        function showAuthSection() {
-            document.getElementById('dashboard-section').style.display = 'none';
-            document.getElementById('auth-section').style.display = 'block';
-            switchTab('login');
-        }
-
-        async function logout() {
-            const result = await authService.logout();
-            if (result.success) {
-                showAuthSection();
-            } else {
-                alert('Logout failed: ' + result.error);
+                if (result.success) {
+                    alert('Registration successful! Please login with your credentials.');
+                    switchTab('login');
+                    document.getElementById('registrationForm').reset();
+                } else {
+                    alert('Registration failed: ' + result.error);
+                }
+            } catch (error) {
+                spinner.style.display = 'none';
+                alert('Registration error: ' + error.message);
             }
         }
-
-        // =============================================
-        // HELPER FUNCTIONS (from original code)
-        // =============================================
 
         function switchTab(tab) {
             if (tab === 'login') {
@@ -1624,90 +1584,12 @@
             }
         }
 
-        function showForgotPassword(e) {
-            e.preventDefault();
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('forgotPasswordForm').style.display = 'block';
-        }
-
-        function showLoginForm(e) {
-            if (e) e.preventDefault();
-            document.getElementById('forgotPasswordForm').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'block';
-            document.getElementById('resetMessage').style.display = 'none';
-        }
-
-        function nextStep(step) {
-            if (!validateStep(step - 1)) return;
-            
-            document.querySelectorAll('.form-step').forEach(stepEl => stepEl.classList.remove('active'));
-            document.getElementById(`step${step}-form`).classList.add('active');
-            
-            document.querySelectorAll('.step').forEach(stepIndicator => stepIndicator.classList.remove('active', 'completed'));
-            for (let i = 1; i <= step; i++) {
-                document.getElementById(`step${i}`).classList.add(i < step ? 'completed' : 'active');
-            }
-        }
-
-        function prevStep(step) {
-            document.querySelectorAll('.form-step').forEach(stepEl => stepEl.classList.remove('active'));
-            document.getElementById(`step${step}-form`).classList.add('active');
-            
-            document.querySelectorAll('.step').forEach(stepIndicator => stepIndicator.classList.remove('active', 'completed'));
-            for (let i = 1; i <= step; i++) {
-                document.getElementById(`step${i}`).classList.add(i < step ? 'completed' : 'active');
-            }
-        }
-
-        function validateStep(step) {
-            // Add validation logic for each step
-            return true;
-        }
-
-        function togglePassword(inputId) {
-            const input = document.getElementById(inputId);
-            const icon = input.nextElementSibling.querySelector('i');
-            input.type = input.type === 'password' ? 'text' : 'password';
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle('fa-eye-slash');
-        }
-
-        function initializeStateCityMapping() {
-            const cityMap = {
-                'Delhi': ['New Delhi', 'Central Delhi', 'North Delhi', 'South Delhi', 'East Delhi', 'West Delhi', 'North East Delhi', 'South West Delhi', 'Shahdara'],
-                'Haryana': ['Gurugram', 'Faridabad', 'Sonipat', 'Panipat', 'Karnal', 'Rohtak', 'Hisar', 'Ambala', 'Yamunanagar'],
-                'Uttar Pradesh': ['Noida', 'Ghaziabad', 'Meerut', 'Agra', 'Lucknow', 'Kanpur', 'Varanasi', 'Allahabad', 'Aligarh'],
-                'Rajasthan': ['Jaipur', 'Jodhpur', 'Udaipur', 'Kota', 'Ajmer', 'Bikaner', 'Alwar', 'Bharatpur']
-            };
-            
-            document.getElementById('state').addEventListener('change', function() {
-                const citySelect = document.getElementById('city');
-                citySelect.innerHTML = '<option value="">Select City</option>';
-                if (this.value && cityMap[this.value]) {
-                    cityMap[this.value].forEach(city => {
-                        const option = document.createElement('option');
-                        option.value = city;
-                        option.textContent = city;
-                        citySelect.appendChild(option);
-                    });
-                }
-            });
-        }
-
-        function initializeHealthFormToggles() {
-            document.querySelectorAll('input[name="respiratory"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    document.getElementById('respiratoryDetails').style.display = 
-                        this.value === 'yes' ? 'block' : 'none';
-                });
-            });
-        }
-
-        // Navigation setup (from original code)
         function setupNavigation() {
+            // Menu toggle
             document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
             document.getElementById('sidebarOverlay').addEventListener('click', toggleSidebar);
             
+            // Sidebar navigation
             document.querySelectorAll('.sidebar-menu a').forEach(link => {
                 link.addEventListener('click', function(e) {
                     if (this.id === 'logout-sidebar') {
@@ -1715,24 +1597,34 @@
                         logout();
                         return;
                     }
+                    
                     const section = this.getAttribute('data-section');
                     showSection(section);
+                    
+                    // Update active state
                     document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
                     this.classList.add('active');
-                    if (window.innerWidth < 768) toggleSidebar();
+                    
+                    // Close sidebar on mobile
+                    if (window.innerWidth < 768) {
+                        toggleSidebar();
+                    }
                 });
             });
             
+            // Notification panel
             document.getElementById('notificationsBtn').addEventListener('click', function() {
                 document.getElementById('notificationPanel').classList.toggle('open');
                 document.getElementById('profilePanel').classList.remove('open');
             });
             
+            // Profile panel
             document.getElementById('profileBtn').addEventListener('click', function() {
                 document.getElementById('profilePanel').classList.toggle('open');
                 document.getElementById('notificationPanel').classList.remove('open');
             });
             
+            // Close panels when clicking outside
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.header-icon') && !e.target.closest('.notification-panel') && !e.target.closest('.profile-panel')) {
                     document.getElementById('notificationPanel').classList.remove('open');
@@ -1740,6 +1632,7 @@
                 }
             });
             
+            // Logout from profile panel
             document.querySelector('.profile-panel .list-group-item:last-child').addEventListener('click', logout);
         }
 
@@ -1749,45 +1642,61 @@
         }
 
         function showSection(section) {
-            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
             document.getElementById(`${section}-section-content`).classList.add('active');
         }
 
-        // =============================================
-        // COMPLAINT SUBMISSION WITH FIREBASE
-        // =============================================
-
-        async function submitComplaint(type, complaintData, images = []) {
-            if (!firebaseManager.isInitialized) {
-                alert('Firebase not configured. Please set up Firebase first.');
-                return;
-            }
-
-            try {
-                // Save complaint to Firestore
-                const complaintId = await firebaseManager.saveComplaint(complaintData);
-                
-                // Upload images if any
-                const imageUrls = [];
-                for (const image of images) {
-                    const imageUrl = await firebaseManager.uploadComplaintImage(image, complaintId);
-                    imageUrls.push(imageUrl);
-                }
-                
-                // Update complaint with image URLs
-                if (imageUrls.length > 0) {
-                    await firebaseManager.db.collection('complaints').doc(complaintId).update({
-                        imageUrls: imageUrls
-                    });
-                }
-                
-                return { success: true, complaintId: complaintId };
-            } catch (error) {
-                console.error('Error submitting complaint:', error);
-                return { success: false, error: error.message };
-            }
+        function showDashboard(userData) {
+            document.getElementById('auth-section').style.display = 'none';
+            document.getElementById('dashboard-section').style.display = 'flex';
+            
+            // Update profile info
+            document.getElementById('profileUserName').textContent = userData.fullName || userData.username;
+            
+            // Initialize dashboard
+            dashboard = new Dashboard();
+            dashboard.currentUser = userData;
+            dashboard.initialize();
         }
 
+        function logout() {
+            localStorage.removeItem('currentUser');
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('auth-section').style.display = 'block';
+            
+            if (dashboard) {
+                dashboard.stopAutoRefresh();
+            }
+            
+            // Reset forms
+            document.getElementById('loginForm').reset();
+            switchTab('login');
+        }
+
+        // Check if user is already logged in
+        const savedUser = localStorage.getItem('currentUser');
+        if (savedUser) {
+            const userData = JSON.parse(savedUser);
+            showDashboard(userData);
+        }
+
+        // Utility function to toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
     </script>
 </body>
 </html>
