@@ -1001,92 +1001,86 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     
     <script>
-        // Backend Service Integration
-        const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxgNG3_Ddnz8nh2jDsdTatCNW83d4RLKnVEI0gYG8-vNIXJ5lYHNvXi22Gc43Y8xQc/exec'; // Replace with your deployed URL
+  // Fixed Backend Service Integration
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwwv3wLrp2RqaiuQBbdAHz1CLnTG0DdXIrEEjZosTlO-G48UsJFPoBLZTYQnvaekoP-/exec'; // Replace with your deployed URL
 
-        class BackendService {
-            constructor() {
-                this.baseUrl = BACKEND_URL;
+class BackendService {
+    constructor() {
+        this.baseUrl = BACKEND_URL;
+    }
+
+    async makeRequest(params) {
+        try {
+            // Build query string from params
+            const queryString = Object.keys(params)
+                .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+                .join('&');
+            
+            const url = `${this.baseUrl}?${queryString}`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-
-            async makeRequest(action, data = null) {
-                try {
-                    const formData = new FormData();
-                    formData.append('action', action);
-                    
-                    if (data) {
-                        formData.append('data', JSON.stringify(data));
-                    }
-
-                    const response = await fetch(this.baseUrl, {
-                        method: 'POST',
-                        body: formData
-                    });
-
-                    return await response.json();
-                } catch (error) {
-                    console.error('Backend request failed:', error);
-                    throw error;
-                }
-            }
-
-            async register(userData) {
-                return await this.makeRequest('register', userData);
-            }
-
-            async login(username, password) {
-                const formData = new FormData();
-                formData.append('action', 'login');
-                formData.append('username', username);
-                formData.append('password', password);
-
-                const response = await fetch(this.baseUrl, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                return await response.json();
-            }
-
-            async getAQIData() {
-                return await this.makeRequest('getAQIData');
-            }
-
-            async submitComplaint(complaintData) {
-                return await this.makeRequest('submitComplaint', complaintData);
-            }
-
-            async getNotifications(userID) {
-                const formData = new FormData();
-                formData.append('action', 'getNotifications');
-                formData.append('userID', userID);
-
-                const response = await fetch(this.baseUrl, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                return await response.json();
-            }
-
-            async getNearbyHospitals(lat, lng, radius = 10) {
-                const formData = new FormData();
-                formData.append('action', 'getHospitals');
-                formData.append('lat', lat);
-                formData.append('lng', lng);
-                formData.append('radius', radius);
-
-                const response = await fetch(this.baseUrl, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                return await response.json();
-            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Backend request failed:', error);
+            throw error;
         }
+    }
 
-        // Initialize backend service
-        const backendService = new BackendService();
+    async register(userData) {
+        return await this.makeRequest({
+            action: 'register',
+            data: JSON.stringify(userData)
+        });
+    }
+
+    async login(username, password) {
+        return await this.makeRequest({
+            action: 'login',
+            username: username,
+            password: password
+        });
+    }
+
+    async getAQIData() {
+        return await this.makeRequest({
+            action: 'getAQIData'
+        });
+    }
+
+    async submitComplaint(complaintData) {
+        return await this.makeRequest({
+            action: 'submitComplaint',
+            data: JSON.stringify(complaintData)
+        });
+    }
+
+    async getNotifications(userID) {
+        return await this.makeRequest({
+            action: 'getNotifications',
+            userID: userID
+        });
+    }
+
+    async getNearbyHospitals(lat, lng, radius = 10) {
+        return await this.makeRequest({
+            action: 'getHospitals',
+            lat: lat,
+            lng: lng,
+            radius: radius
+        });
+    }
+}
+
+// Initialize backend service
+const backendService = new BackendService();
 
         // Dashboard functionality
         class Dashboard {
